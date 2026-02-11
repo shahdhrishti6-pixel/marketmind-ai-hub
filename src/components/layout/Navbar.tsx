@@ -10,6 +10,7 @@ const navLinks = [
   { name: "Templates", path: "/templates" },
   { name: "Insights", path: "/insights" },
   { name: "AI Center", path: "/ai-center" },
+  { name: "Automations", path: "/automations" },
   { name: "About", path: "/about" },
   { name: "Contact", path: "/contact" },
 ];
