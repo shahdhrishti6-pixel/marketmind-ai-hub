@@ -1,6 +1,16 @@
-import { createContext, useContext, useEffect, useState, ReactNode } from "react";
+import { createContext, useContext, useEffect, useState, useRef, ReactNode } from "react";
 import { User, Session } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
+
+const syncToSheet = async (email: string, event: string, displayName?: string) => {
+  try {
+    await supabase.functions.invoke("sync-to-sheet", {
+      body: { email, event, display_name: displayName },
+    });
+  } catch (err) {
+    console.error("Failed to sync to sheet:", err);
+  }
+};
 
 interface AuthContextType {
   user: User | null;
@@ -43,11 +53,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         data: { display_name: displayName },
       },
     });
+    if (!error) {
+      syncToSheet(email, "sign_up", displayName);
+    }
     return { error };
   };
 
   const signIn = async (email: string, password: string) => {
     const { error } = await supabase.auth.signInWithPassword({ email, password });
+    if (!error) {
+      syncToSheet(email, "sign_in");
+    }
     return { error };
   };
 
